@@ -7,7 +7,7 @@ export const GameConfig = {
   HEIGHT: 800,
   
   // Velocità scroll sfondo (pixel al secondo)
-  BACKGROUND_SCROLL_SPEED: 300,
+  BACKGROUND_SCROLL_SPEED: 500,
   
   // Posizione cucciolo (centro schermo)
   PUPPY_X: 1050,

@@ -57,6 +57,8 @@ export class GameScene extends Phaser.Scene {
     const puppyGraphics = this.add.graphics();
     puppyGraphics.fillStyle(0xFFA500, 1); // Arancione
     puppyGraphics.fillCircle(50, 50, 40); // Corpo
+    puppyGraphics.fillCircle(20, 20, 14); // Ear sx
+    puppyGraphics.fillCircle(80, 20, 14); // Ear dx
     puppyGraphics.fillStyle(0x000000, 1); // Nero
     puppyGraphics.fillCircle(35, 35, 8); // Occhio sx
     puppyGraphics.fillCircle(65, 35, 8); // Occhio dx

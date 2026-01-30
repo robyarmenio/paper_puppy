@@ -29,10 +29,11 @@ I file compilati saranno in `dist/` (pronti per deploy su Azure Static Web Apps)
 - Tap/click a sinistra dello schermo → sfondo scorre a destra
 - Tap/click a destra dello schermo → sfondo scorre a sinistra
 - Zona centrale "dead" per evitare scroll accidentali
+- Controllo collisione muri alla fine della stanza
 
 ✅ **Cucciolo statico**
 - Sprite placeholder al centro (cerchio arancione)
-- Pronto per essere sostituito con disegni di Lisa
+- Pronto per essere sostituito con disegni custom (su carta per scelta artistica)
 
 ✅ **Struttura progetto**
 ```
@@ -84,12 +85,13 @@ Tutte le costanti modificabili sono in `src/config/GameConfig.ts`:
 
 ```typescript
 export const GameConfig = {
-  WIDTH: 800,                      // Larghezza canvas
-  HEIGHT: 600,                     // Altezza canvas
-  BACKGROUND_SCROLL_SPEED: 100,    // Velocità scroll (px/sec)
-  PUPPY_X: 400,                    // Posizione X cucciolo
-  PUPPY_Y: 450,                    // Posizione Y cucciolo
-  TAP_DEAD_ZONE: 50                // Zona centrale non-cliccabile
+  WIDTH: 800,                       // Larghezza canvas
+  HEIGHT: 600,                      // Altezza canvas
+  BACKGROUND_SCROLL_SPEED: 500,     // Velocità scroll (px/sec)
+  PUPPY_X: 400,                     // Posizione X cucciolo
+  PUPPY_Y: 450,                     // Posizione Y cucciolo
+  TAP_DEAD_ZONE: 50,                // Zona centrale non-cliccabile
+  BACKGROUND_WIDTH: 6300            // Larghezza sfondo scrollabile
 };
 ```
 

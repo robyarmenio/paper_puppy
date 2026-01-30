@@ -8,11 +8,14 @@ import { GameConfig } from '../config/GameConfig';
  */
 export class GameScene extends Phaser.Scene {
   private puppy!: Puppy;
-  private background!: Phaser.GameObjects.TileSprite;
+  private background!: Phaser.GameObjects.Image;
   
   // Stato scroll
   private isScrolling: boolean = false;
   private scrollDirection: number = 0; // -1 sinistra, 1 destra
+  private operatingWindow = GameConfig.BACKGROUND_WIDTH - GameConfig.WIDTH;
+  private readonly SCROLL_MAX: number = this.operatingWindow - 150;  // Limite destro (1 schermata a dx)
+  private readonly SCROLL_MIN: number = (this.operatingWindow / -2) + 150; // Limite sinistro (1 schermata a sx)
   
   constructor() {
     super({ key: 'GameScene' });
@@ -34,12 +37,20 @@ export class GameScene extends Phaser.Scene {
     // Sfondo casa (pattern ripetibile)
     const bgGraphics = this.add.graphics();
     bgGraphics.fillStyle(0xF5DEB3, 1); // Beige (muro casa)
-    bgGraphics.fillRect(0, 0, 2100, 800);
+    bgGraphics.fillRect(0, 0, GameConfig.BACKGROUND_WIDTH, 800);
     bgGraphics.fillStyle(0x8B4513, 1); // Marrone (pavimento)
-    bgGraphics.fillRect(0, 700, 2100, 100);    
+    bgGraphics.fillRect(0, 700, GameConfig.BACKGROUND_WIDTH, 100);    
+    bgGraphics.fillRect(0, 0, 50, 800);    // Muro sx
+    bgGraphics.fillRect(GameConfig.BACKGROUND_WIDTH - 50, 0, 50, 800);    // Muro dx
     bgGraphics.fillStyle(0x8B8533, 1); // Marrone (porta)
-    bgGraphics.fillRect(300, 100, 300, 600);
-    bgGraphics.generateTexture('background-casa', 2100, 800);
+    bgGraphics.fillRect(3200, 100, 300, 600);
+    bgGraphics.fillStyle(0xCCCCFF, 1); // Azzurro (Finestre)
+    bgGraphics.fillRect(200, 300, 500, 200);
+    bgGraphics.fillRect(1200, 300, 500, 200);
+    bgGraphics.fillRect(2200, 300, 500, 200);
+    bgGraphics.fillRect(4200, 300, 500, 200);
+    bgGraphics.fillRect(5200, 300, 500, 200);
+    bgGraphics.generateTexture('background-casa', GameConfig.BACKGROUND_WIDTH, 800);
     bgGraphics.destroy();
 
     // Cucciolo idle (cerchio semplice per ora)
@@ -58,14 +69,13 @@ export class GameScene extends Phaser.Scene {
    * Setup scena
    */
   create(): void {
-    // Crea sfondo scrollabile (TileSprite per ripetizione infinita)
-    this.background = this.add.tileSprite(
-      GameConfig.WIDTH / 2,
-      GameConfig.HEIGHT / 2,
-      GameConfig.WIDTH * 3, // Largo 3x per scroll fluido
-      GameConfig.HEIGHT,
+    // Crea sfondo scrollabile
+    this.background = this.add.image(
+      GameConfig.WIDTH / 2, 
+      GameConfig.HEIGHT / 2, 
       'background-casa'
     );
+    this.background.setOrigin(0.5, 0.5);
 
     // Crea cucciolo al centro
     this.puppy = new Puppy(
@@ -103,10 +113,10 @@ export class GameScene extends Phaser.Scene {
       // Determina direzione
       if (tapX < centerX) {
         // Tap a sinistra → scroll verso sinistra (sfondo va a destra)
-        this.scrollDirection = -1;
+        this.scrollDirection = 1;
       } else {
         // Tap a destra → scroll verso destra (sfondo va a sinistra)
-        this.scrollDirection = 1;
+        this.scrollDirection = -1;
       }
       
       this.isScrolling = true;
@@ -135,7 +145,22 @@ export class GameScene extends Phaser.Scene {
     // Scroll sfondo se attivo
     if (this.isScrolling && this.scrollDirection !== 0) {
       const scrollAmount = GameConfig.BACKGROUND_SCROLL_SPEED * deltaSeconds * this.scrollDirection;
-      this.background.tilePositionX += scrollAmount;
+
+      // Calcola nuova posizione
+      const newX = this.background.x + scrollAmount;
+      
+      // 🆕 Applica limiti (clamp)
+      const minX = this.SCROLL_MIN;
+      const maxX = this.SCROLL_MAX;
+
+      console.log(`Background X: ${this.background.x}, New X: ${newX}, Min X: ${minX}, Max X: ${maxX}`);
+      
+      this.background.x = Phaser.Math.Clamp(newX, minX, maxX);
+      
+      // 🆕 Optional: feedback quando colpisci il muro
+      if (newX < minX || newX > maxX) {
+        this.cameras.main.shake(50, 0.002);
+      }
     }
 
     // Update cucciolo (per ora non fa nulla, ma struttura pronta)

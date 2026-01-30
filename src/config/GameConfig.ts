@@ -14,5 +14,7 @@ export const GameConfig = {
   PUPPY_Y: 650,
   
   // Zona "dead" centrale per evitare scroll accidentali (pixel dal centro)
-  TAP_DEAD_ZONE: 50
+  TAP_DEAD_ZONE: 50,
+
+  BACKGROUND_WIDTH: 6300 // 3 schermate!
 } as const;

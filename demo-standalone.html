@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tamagotchi v0.1 - Test Standalone</title>
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3.80.1/dist/phaser.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      overflow: hidden;
+      background-color: #87CEEB;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container"></div>
+  
+  <script>
+    // Configurazione
+    const GameConfig = {
+      WIDTH: 800,
+      HEIGHT: 600,
+      BACKGROUND_SCROLL_SPEED: 100,
+      PUPPY_X: 400,
+      PUPPY_Y: 450,
+      TAP_DEAD_ZONE: 50
+    };
+
+    // Scene principale
+    class GameScene extends Phaser.Scene {
+      constructor() {
+        super({ key: 'GameScene' });
+        this.isScrolling = false;
+        this.scrollDirection = 0;
+      }
+
+      preload() {
+        this.createPlaceholderAssets();
+      }
+
+      createPlaceholderAssets() {
+        // Sfondo casa
+        const bgGraphics = this.add.graphics();
+        bgGraphics.fillStyle(0xF5DEB3, 1);
+        bgGraphics.fillRect(0, 0, 800, 600);
+        bgGraphics.fillStyle(0x8B4513, 1);
+        bgGraphics.fillRect(0, 500, 800, 100);
+        
+        // Aggiungi dettagli casa
+        bgGraphics.fillStyle(0xA0522D, 1);
+        bgGraphics.fillRect(50, 400, 100, 100); // Porta
+        bgGraphics.fillStyle(0xFFFFFF, 1);
+        bgGraphics.fillRect(600, 300, 80, 80); // Finestra
+        
+        bgGraphics.generateTexture('background-casa', 800, 600);
+        bgGraphics.destroy();
+
+        // Cucciolo carino
+        const puppyGraphics = this.add.graphics();
+        puppyGraphics.fillStyle(0xFFA500, 1);
+        puppyGraphics.fillEllipse(50, 60, 80, 60); // Corpo
+        puppyGraphics.fillCircle(50, 30, 30); // Testa
+        
+        // Orecchie
+        puppyGraphics.fillStyle(0xFF8C00, 1);
+        puppyGraphics.fillEllipse(30, 20, 15, 25);
+        puppyGraphics.fillEllipse(70, 20, 15, 25);
+        
+        // Occhi
+        puppyGraphics.fillStyle(0x000000, 1);
+        puppyGraphics.fillCircle(40, 28, 5);
+        puppyGraphics.fillCircle(60, 28, 5);
+        
+        // Naso
+        puppyGraphics.fillCircle(50, 38, 4);
+        
+        // Zampe
+        puppyGraphics.fillStyle(0xFFA500, 1);
+        puppyGraphics.fillEllipse(30, 85, 12, 20);
+        puppyGraphics.fillEllipse(70, 85, 12, 20);
+        
+        puppyGraphics.generateTexture('puppy-idle', 100, 100);
+        puppyGraphics.destroy();
+      }
+
+      create() {
+        // Sfondo
+        this.background = this.add.tileSprite(
+          GameConfig.WIDTH / 2,
+          GameConfig.HEIGHT / 2,
+          GameConfig.WIDTH * 3,
+          GameConfig.HEIGHT,
+          'background-casa'
+        );
+
+        // Cucciolo
+        this.puppy = this.add.sprite(
+          GameConfig.PUPPY_X,
+          GameConfig.PUPPY_Y,
+          'puppy-idle'
+        );
+        this.puppy.setScale(2);
+
+        // Setup input
+        this.input.on('pointerdown', (pointer) => {
+          const centerX = GameConfig.WIDTH / 2;
+          const tapX = pointer.x;
+          
+          if (Math.abs(tapX - centerX) < GameConfig.TAP_DEAD_ZONE) {
+            return;
+          }
+
+          this.scrollDirection = tapX < centerX ? 1 : -1;
+          this.isScrolling = true;
+        });
+
+        this.input.on('pointerup', () => {
+          this.isScrolling = false;
+          this.scrollDirection = 0;
+        });
+
+        this.input.on('pointerout', () => {
+          this.isScrolling = false;
+          this.scrollDirection = 0;
+        });
+
+        // Istruzioni
+        this.add.text(10, 10, '🐶 v0.1 - Tap sinistra/destra per muovere', {
+          fontSize: '18px',
+          color: '#ffffff',
+          backgroundColor: '#000000',
+          padding: { x: 8, y: 5 }
+        });
+      }
+
+      update(time, delta) {
+        if (this.isScrolling && this.scrollDirection !== 0) {
+          const deltaSeconds = delta / 1000;
+          const scrollAmount = GameConfig.BACKGROUND_SCROLL_SPEED * deltaSeconds * this.scrollDirection;
+          this.background.tilePositionX += scrollAmount;
+        }
+      }
+    }
+
+    // Avvia gioco
+    const config = {
+      type: Phaser.AUTO,
+      parent: 'game-container',
+      width: GameConfig.WIDTH,
+      height: GameConfig.HEIGHT,
+      backgroundColor: '#87CEEB',
+      scale: {
+        mode: Phaser.Scale.FIT,
+        autoCenter: Phaser.Scale.CENTER_BOTH,
+      },
+      scene: [GameScene]
+    };
+
+    const game = new Phaser.Game(config);
+    console.log('🐶 Tamagotchi v0.1 avviato!');
+  </script>
+</body>
+</html>

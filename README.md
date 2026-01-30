@@ -1,7 +1,6 @@
 # 🐶 Tamagotchi Cucciolo - v0.1
 
-Progetto Phaser 3 + TypeScript per creare un Tamagotchi virtuale con tua figlia Lisa.
-
+Progetto Phaser 3 + TypeScript per creare un Tamagotchi virtuale
 ## 📦 Setup Iniziale
 
 ### 1. Installa dipendenze
@@ -48,7 +47,7 @@ tamagotchi-v01/
 │   └── main.ts                ← Entry point Phaser
 ├── public/
 │   └── assets/
-│       └── sprites/           ← Qui metterai PNG di Lisa
+│       └── sprites/           ← Qui metterai PNG
 ├── index.html
 ├── package.json
 └── vite.config.ts
@@ -56,7 +55,7 @@ tamagotchi-v01/
 
 ---
 
-## 🖼️ Come sostituire placeholder con disegni di Lisa
+## 🖼️ Come sostituire placeholder con disegni
 
 ### Passo 1: Prepara gli sprite
 1. Lisa disegna il cucciolo "Idle" su carta

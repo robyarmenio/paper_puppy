@@ -2,7 +2,7 @@ name: Deploy su GitHub Pages
 
 on:
   push:
-    branches: [main]    # Si attiva ogni push sul branch main
+    branches: [deploy]    # Si attiva ogni push sul branch deploy
 
 jobs:
   build:

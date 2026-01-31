@@ -13,7 +13,7 @@ export class Puppy {
     
     // Crea sprite (per ora placeholder, sostituirai con disegno di Lisa)
     this.sprite = scene.add.sprite(x, y, 'puppy-idle');
-    this.sprite.setScale(2); // Ingrandisci placeholder
+    this.sprite.setScale(0.25); // Ingrandisci placeholder
   }
 
   /**

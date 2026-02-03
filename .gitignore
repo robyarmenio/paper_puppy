@@ -1,6 +1,5 @@
 # Dependencies
 node_modules/
-package-lock.json
 
 # Build outputs
 dist/
@@ -27,3 +26,4 @@ npm-debug.log*
 
 # Claude AI Backup Folder
 __Claude
+__Media

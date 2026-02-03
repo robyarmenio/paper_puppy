@@ -25,9 +25,31 @@ export class GameScene extends Phaser.Scene {
    * Preload assets
    */
   preload(): void {
-    // Per v0.1 creiamo placeholder grafici semplici
-    // Li sostituirai con i PNG di Lisa
-    this.createPlaceholderAssets();
+    // this.createPlaceholderAssets();
+    this.createCapyAssets();
+  }
+
+  private createCapyAssets(): void {
+
+    const bgGraphics = this.add.graphics();
+    bgGraphics.fillStyle(0xF5DEB3, 1); // Beige (muro casa)
+    bgGraphics.fillRect(0, 0, GameConfig.BACKGROUND_WIDTH, 800);
+    bgGraphics.fillStyle(0x8B4513, 1); // Marrone (pavimento)
+    bgGraphics.fillRect(0, 700, GameConfig.BACKGROUND_WIDTH, 100);    
+    bgGraphics.fillRect(0, 0, 50, 800);    // Muro sx
+    bgGraphics.fillRect(GameConfig.BACKGROUND_WIDTH - 50, 0, 50, 800);    // Muro dx
+    bgGraphics.fillStyle(0x8B8533, 1); // Marrone (porta)
+    bgGraphics.fillRect(3200, 100, 300, 600);
+    bgGraphics.fillStyle(0xCCCCFF, 1); // Azzurro (Finestre)
+    bgGraphics.fillRect(200, 300, 500, 200);
+    bgGraphics.fillRect(1200, 300, 500, 200);
+    bgGraphics.fillRect(2200, 300, 500, 200);
+    bgGraphics.fillRect(4200, 300, 500, 200);
+    bgGraphics.fillRect(5200, 300, 500, 200);
+    bgGraphics.generateTexture('background-casa', GameConfig.BACKGROUND_WIDTH, 800);
+    bgGraphics.destroy();
+    
+    this.load.image('puppy-idle', 'assets/sprites/Capy/felice.png');
   }
 
   /**

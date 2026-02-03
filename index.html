@@ -8,7 +8,7 @@
   <title>Paper Puppy v.0.1  🐶</title>
   <style>
     * {
-      margin: 0;
+      margin: 0 !important;
       padding: 0;
       box-sizing: border-box;
     }
@@ -18,11 +18,21 @@
       font-family: 'Comic Sans MS', cursive, sans-serif;
     }
     #game-container {
-      display: flex;
+      display: block;
       justify-content: center;
       align-items: center;
-      width: 100vw;
+      width: 100dvw;
       height: 100vh;
+      position: fixed; /* Fissato alla viewport */
+      top: 0;
+      left: 0;
+    }
+
+    /* 🆕 Assicura che il canvas Phaser riempia lo spazio */
+    canvas {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
     }
   </style>
 </head>

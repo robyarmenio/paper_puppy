@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { GameScene } from './scenes/GameScene';
 import { GameConfig } from './config/GameConfig';
+import { GardenScene } from './scenes/GardenScene';
 
 /**
  * Configurazione Phaser
@@ -19,7 +20,7 @@ const config: Phaser.Types.Core.GameConfig = {
   },
 
   // Scene del gioco
-  scene: [GameScene],
+  scene: [GameScene, GardenScene],
 
   // Physics non necessaria per v0.1 (aggiungeremo se serve)
   physics: {

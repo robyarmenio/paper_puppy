@@ -7,9 +7,20 @@ export class GardenScene extends Phaser.Scene {
     private puppy!: Puppy;
     private background!: Phaser.GameObjects.Image;
     private gardenContainer!: Phaser.GameObjects.Container;
+    isScrolling: boolean;
+    runDirection: number;
+    runDuration: number;
+    runTimer: number = 0;
 
+    private readonly SCROLL_MAX: number = (GameConfig.WIDTH / 2) - 150;  // Limite destro (1 schermata a dx)
+    private readonly SCROLL_MIN: number = ((GameConfig.BACKGROUND_WIDTH - (GameConfig.WIDTH / 2)) * -1) + 150; // Limite sinistro (1 schermata a sx)
+  
     constructor() {
         super({ key: 'GardenScene' });
+
+        this.isScrolling = true; // Abilita scroll in giardino (per ora sempre attivo, ma potremmo disabilitarlo in futuro)
+        this.runDirection = Math.random() < 0.5 ? -1 : 1; // Direzione casuale all'ingresso
+        this.runDuration = 2 + Math.random() * 4; // Durata corsa casuale tra 2 e 6 secondi
     }
 
     preload(): void {
@@ -73,4 +84,44 @@ export class GardenScene extends Phaser.Scene {
             GameConfig.PUPPY_Y
         );
     }
+
+    /**
+       * Update loop principale
+       */
+      update(time: number, delta: number): void {
+        // Converti delta da millisecondi a secondi
+        const deltaSeconds = delta / 1000;
+    
+        // Gestisci il timer di corsa
+        this.runTimer += deltaSeconds;
+        if (this.runTimer > this.runDuration) {
+          this.runDirection *= -1; // Cambia direzione
+          this.runTimer = 0;
+          this.runDuration = 2 + Math.random() * 4; // Nuova durata casuale
+        }
+    
+        // Scroll sfondo se attivo
+        if (this.isScrolling && this.runDirection !== 0) {
+          const scrollAmount = GameConfig.BACKGROUND_SCROLL_SPEED * 2 * deltaSeconds * this.runDirection;
+    
+          // Calcola nuova posizione
+          const newX = this.gardenContainer.x + scrollAmount;
+          
+          // 🆕 Applica limiti (clamp)
+          const minX = this.SCROLL_MIN;
+          const maxX = this.SCROLL_MAX;
+    
+          console.log(`Garden Container X: ${this.gardenContainer.x}, New X: ${newX}, Min X: ${minX}, Max X: ${maxX}`);
+          
+          this.gardenContainer.x = Phaser.Math.Clamp(newX, minX, maxX);
+          
+          // 🆕 Optional: feedback quando colpisci il muro
+          if (newX < minX || newX > maxX) {
+            this.cameras.main.shake(50, 0.002);
+          }
+        }
+    
+        // Update cucciolo (per ora non fa nulla, ma struttura pronta)
+        this.puppy.update(deltaSeconds);
+      }
 }

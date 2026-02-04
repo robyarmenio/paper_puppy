@@ -61,7 +61,7 @@ export class GameScene extends Phaser.Scene {
    * Crea placeholder temporanei (per testare senza asset)
    */
   private createPlaceholderAssets(): void {
-    // Sfondo casa (pattern ripetibile)
+    // Sfondo casa 
     const bgGraphics = this.add.graphics();
     bgGraphics.fillStyle(0xF5DEB3, 1); // Beige (muro casa)
     bgGraphics.fillRect(0, 0, GameConfig.BACKGROUND_WIDTH, 800);
@@ -70,11 +70,11 @@ export class GameScene extends Phaser.Scene {
     bgGraphics.fillRect(0, 0, 50, 800);    // Muro sx
     bgGraphics.fillRect(GameConfig.BACKGROUND_WIDTH - 50, 0, 50, 800);    // Muro dx
     bgGraphics.fillStyle(0xAACCFF, 1); // Azzurro (Finestre)
-    bgGraphics.fillRect(200, 300, 500, 200);
-    bgGraphics.fillRect(1200, 300, 500, 200);
-    bgGraphics.fillRect(2200, 300, 500, 200);
-    bgGraphics.fillRect(4200, 300, 500, 200);
-    bgGraphics.fillRect(5200, 300, 500, 200);
+    bgGraphics.fillRect(500, 300, 500, 200);
+    bgGraphics.fillRect(1500, 300, 500, 200);
+    bgGraphics.fillRect(2500, 300, 500, 200);
+    bgGraphics.fillRect(4500, 300, 500, 200);
+    bgGraphics.fillRect(5500, 300, 500, 200);
     bgGraphics.generateTexture('background-casa', GameConfig.BACKGROUND_WIDTH, 800);
     bgGraphics.destroy();
 
@@ -82,6 +82,7 @@ export class GameScene extends Phaser.Scene {
     doorGraphics.fillStyle(0x8B8533, 1); // Marrone (porta)
     doorGraphics.fillRect(0, 0, 300, 800);
     doorGraphics.generateTexture('door', 300, 800);
+    doorGraphics.destroy();
 
     // Cucciolo idle (cerchio semplice per ora)
     const puppyGraphics = this.add.graphics();
@@ -106,11 +107,15 @@ export class GameScene extends Phaser.Scene {
     this.background.setOrigin(0, 0);
 
     // Porta per andare in giardino
-    const door = this.add.sprite(3200, 400, 'door');
+    const door = this.add.sprite(4000, 400, 'door');
     door.setInteractive({ cursor: 'pointer' });
     door.on('pointerdown', () => {
+      if(this.houseContainer.x > - 2800 || this.houseContainer.x < - 3100) {
+        // Porta non cliccabile (il cucciolo deve essere vicino alla porta)
+        return;
+      }
       this.scene.start('GardenScene', 
-        { puppy: this.puppy }
+        { puppyState: this.puppy.getState() }
       ); // Vai in giardino
     });
 
@@ -132,7 +137,7 @@ export class GameScene extends Phaser.Scene {
     this.setupInput();
 
     // Debug info
-    this.add.text(10, 10, 'v0.1 - Tap sinistra/destra per muovere sfondo', {
+    this.add.text(10, 10, 'v0.2 - Tap sinistra/destra per muoverti, clicca la porta per andare in giardino', {
       fontSize: '16px',
       color: '#ffffff',
       backgroundColor: '#000000',

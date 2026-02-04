@@ -38,6 +38,6 @@ const game = new Phaser.Game(config);
 // Esponi globalmente per debug (opzionale)
 if (import.meta.env.DEV) {
   (window as any).game = game;
-  console.log('🐶 Tamagotchi v0.1 avviato!');
-  console.log('📱 Tap sinistra/destra per muovere lo sfondo');
+  console.log('🐶 Tamagotchi v0.2 avviato!');
+  console.log('📱 Tap sinistra/destra per muoversi, clicca la porta per andare in giardino');
 }

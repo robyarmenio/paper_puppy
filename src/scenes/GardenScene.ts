@@ -48,11 +48,21 @@ export class GardenScene extends Phaser.Scene {
         bgGraphics.fillCircle(5550, 150, 200);
         bgGraphics.generateTexture('garden-bg', GameConfig.BACKGROUND_WIDTH, 800);
         bgGraphics.destroy();
+
+        const houseGraphics = this.add.graphics();
+        houseGraphics.fillStyle(0xABA563, 1); // Beige (muro casa)
+        houseGraphics.fillRect(0, 200, 600, 500);
+        houseGraphics.fillStyle(0xFF4444, 1); // Rosso (Tetto)
+        houseGraphics.fillTriangle(0, 200, 300, 0, 600, 200);
+        houseGraphics.generateTexture('house', 600, 700);
+        houseGraphics.destroy();
     
         const doorGraphics = this.add.graphics();
         doorGraphics.fillStyle(0x8B8533, 1); // Marrone (porta)
-        doorGraphics.fillRect(0, 0, 300, 600);
-        doorGraphics.generateTexture('door2', 300, 600);
+        doorGraphics.fillRect(0, 0, 200, 400);
+        doorGraphics.fillStyle(0xFFD700, 1); // Oro (pomello)
+        doorGraphics.fillCircle(160, 230, 8);
+        doorGraphics.generateTexture('door2', 200, 400);
         doorGraphics.destroy();
 
         this.load.image('puppy-idle', 'assets/sprites/Capy/felice.png');
@@ -62,9 +72,11 @@ export class GardenScene extends Phaser.Scene {
         // Sfondo giardino
         this.background = this.add.image(0, 0,'garden-bg');
         this.background.setOrigin(0, 0);
+
+        const house = this.add.sprite(4000, 350, 'house');
         
         // Porta per tornare in casa
-        const door2 = this.add.sprite(4000, 400, 'door2');
+        const door2 = this.add.sprite(4000, 500, 'door2');
         door2.setInteractive({ cursor: 'pointer' });
         door2.on('pointerdown', () => {
             this.scene.start('GameScene'); // Torna in casa
@@ -72,7 +84,7 @@ export class GardenScene extends Phaser.Scene {
 
         // 3. Crea container che li contiene entrambi
         const gardenContainer = this.add.container(GameConfig.BACKGROUND_WIDTH / -2 , 0);
-        gardenContainer.add([this.background, door2]);
+        gardenContainer.add([this.background, house, door2]);
         
         // 4. Salva riferimento per scroll
         this.gardenContainer = gardenContainer;    

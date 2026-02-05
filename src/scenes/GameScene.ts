@@ -51,6 +51,8 @@ export class GameScene extends Phaser.Scene {
     const doorGraphics = this.add.graphics();
     doorGraphics.fillStyle(0x8B8533, 1); // Marrone (porta)
     doorGraphics.fillRect(0, 0, 300, 600);
+    doorGraphics.fillStyle(0xFFD700, 1); // Oro (pomello)
+    doorGraphics.fillCircle(240, 380, 13);
     doorGraphics.generateTexture('door', 300, 600);
     doorGraphics.destroy();
     

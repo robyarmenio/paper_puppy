@@ -5,8 +5,9 @@ export class GardenScene extends Phaser.Scene {
     
     private puppyState!: any;
     private puppy!: Puppy;
-    private background!: Phaser.GameObjects.Image;
-    private gardenContainer!: Phaser.GameObjects.Container;
+    //private background!: Phaser.GameObjects.Image;
+    private background!: Phaser.GameObjects.TileSprite;
+    private houseContainer!: Phaser.GameObjects.Container;
     isScrolling: boolean;
     runDirection: number;
     runDuration: number;
@@ -49,6 +50,18 @@ export class GardenScene extends Phaser.Scene {
         bgGraphics.generateTexture('garden-bg', GameConfig.BACKGROUND_WIDTH, 800);
         bgGraphics.destroy();
 
+        const bgTileGraphics = this.add.graphics();
+        bgTileGraphics.fillStyle(0xAADDFF, 1); // Azzurro (Cielo)
+        bgTileGraphics.fillRect(0, 0, GameConfig.HEIGHT, GameConfig.HEIGHT);
+        bgTileGraphics.fillStyle(0x009900, 1); // Verde Scuro (erba)
+        bgTileGraphics.fillRect(0, 700, GameConfig.HEIGHT, 100);    
+        bgTileGraphics.fillStyle(0x7B5522, 1); // Marrone (Tronchi alberi)
+        bgTileGraphics.fillRect(500, 200, 100, 500);
+        bgTileGraphics.fillStyle(0x66BB44, 1); // Verde Chiaro (chiome)
+        bgTileGraphics.fillCircle(550, 150, 200);
+        bgTileGraphics.generateTexture('garden-tile-bg', GameConfig.HEIGHT, GameConfig.HEIGHT);
+        bgTileGraphics.destroy();
+
         const houseGraphics = this.add.graphics();
         houseGraphics.fillStyle(0xABA563, 1); // Beige (muro casa)
         houseGraphics.fillRect(0, 200, 600, 500);
@@ -70,7 +83,7 @@ export class GardenScene extends Phaser.Scene {
 
     create(): void {
         // Sfondo giardino
-        this.background = this.add.image(0, 0,'garden-bg');
+        this.background = this.add.tileSprite(0, 0, GameConfig.BACKGROUND_WIDTH, GameConfig.HEIGHT, 'garden-tile-bg');
         this.background.setOrigin(0, 0);
 
         const house = this.add.sprite(4000, 350, 'house');
@@ -83,11 +96,11 @@ export class GardenScene extends Phaser.Scene {
         });
 
         // 3. Crea container che li contiene entrambi
-        const gardenContainer = this.add.container(GameConfig.BACKGROUND_WIDTH / -2 , 0);
-        gardenContainer.add([this.background, house, door2]);
+        const houseContainer = this.add.container(GameConfig.BACKGROUND_WIDTH / -2 , 0);
+        houseContainer.add([house, door2]);
         
         // 4. Salva riferimento per scroll
-        this.gardenContainer = gardenContainer;    
+        this.houseContainer = houseContainer;    
 
         // Crea cucciolo al centro
         this.puppy = new Puppy(
@@ -95,6 +108,33 @@ export class GardenScene extends Phaser.Scene {
             GameConfig.PUPPY_X,
             GameConfig.PUPPY_Y
         );
+    }
+
+    /**
+   * 🆕 Cambia direzione random (con bias verso porta)
+   */
+    private changeDirection(): void {
+        // 🎯 BIAS VERSO PORTA (se troppo lontano)
+        const distanceFromDoor = this.background.tilePositionX;
+        
+        if (distanceFromDoor < -1000) {
+        // Probabilità 80% di tornare verso porta (destra)
+            this.runDirection = Math.random() < 0.8 ? 1 : -1;
+            console.log("Go (mostly ) right");
+        } else if (distanceFromDoor > 1000) {
+        // Probabilità 80% di tornare verso porta (sinistra)
+            this.runDirection = Math.random() < 0.8 ? -1 : 1;
+            console.log("Go (mostly) left");
+        } 
+        else {
+        // Movimento casuale normale
+            this.runDirection = Math.random() < 0.5 ? -1 : 1;
+        }
+        
+        // 🎨 Flip sprite in base a direzione
+        //this.puppy.setFlipX(this.runDirection < 0);
+
+        console.log(`🐕 Direzione: ${this.runDirection === 1 ? '→' : '←'} (distanza porta: ${distanceFromDoor.toFixed(0)}px)`);
     }
 
     /**
@@ -107,30 +147,23 @@ export class GardenScene extends Phaser.Scene {
         // Gestisci il timer di corsa
         this.runTimer += deltaSeconds;
         if (this.runTimer > this.runDuration) {
-          this.runDirection *= -1; // Cambia direzione
+          this.changeDirection(); // Cambia direzione
           this.runTimer = 0;
-          this.runDuration = 2 + Math.random() * 4; // Nuova durata casuale
+          this.runDuration = 2 + Math.random() * 1; // Nuova durata casuale
         }
     
         // Scroll sfondo se attivo
         if (this.isScrolling && this.runDirection !== 0) {
-          const scrollAmount = GameConfig.BACKGROUND_SCROLL_SPEED * 2 * deltaSeconds * this.runDirection;
+          const movement = GameConfig.BACKGROUND_SCROLL_SPEED * deltaSeconds * this.runDirection * 1.33;
     
-          // Calcola nuova posizione
-          const newX = this.gardenContainer.x + scrollAmount;
+          // Calcola nuova posizione elementi        
           
-          // 🆕 Applica limiti (clamp)
-          const minX = this.SCROLL_MIN;
-          const maxX = this.SCROLL_MAX;
-    
-          console.log(`Garden Container X: ${this.gardenContainer.x}, New X: ${newX}, Min X: ${minX}, Max X: ${maxX}`);
+          this.background.tilePositionX += movement;
+          this.houseContainer.x -= movement * 1.1; // Scrolling più veloce per casa (parallax)
           
-          this.gardenContainer.x = Phaser.Math.Clamp(newX, minX, maxX);
+          //console.log(`Background X: ${this.background.tilePositionX}, House Container X: ${this.houseContainer.x}`);
           
-          // 🆕 Optional: feedback quando colpisci il muro
-          if (newX < minX || newX > maxX) {
-            this.cameras.main.shake(50, 0.002);
-          }
+          
         }
     
         // Update cucciolo (per ora non fa nulla, ma struttura pronta)

@@ -23,6 +23,11 @@ export class Puppy {
     return this.sprite;
   }
 
+  getState(): any {
+    // v0.1: nessuno stato da salvare ancora
+    return {};
+  }
+
   /**
    * Update chiamato ogni frame (per ora vuoto, ma preparato per v0.2+)
    */
